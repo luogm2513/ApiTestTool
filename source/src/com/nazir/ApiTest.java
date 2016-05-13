@@ -65,7 +65,7 @@ public class ApiTest extends JFrame {
             final JComboBox comboBox = new JComboBox();
             comboBox.setBounds(395, 10, 157, 25);
             comboBox.addItem("android");
-            comboBox.addItem("IOS");
+            comboBox.addItem("ios");
             getContentPane().add(comboBox);
             if (StringUtils.isBlank(auth)) {
                 setTitle("ApiTest (未登录)");
@@ -73,9 +73,9 @@ public class ApiTest extends JFrame {
                 if (userAgent.equals("android")) {
                     setTitle("ApiTest (已登录安卓版:" + loginName + ")");
                     comboBox.setSelectedItem("android");
-                } else if (userAgent.equals("IOS")) {
+                } else if (userAgent.equals("ios")) {
                     setTitle("ApiTest (已登录IOS版)" + loginName + ")");
-                    comboBox.setSelectedItem("IOS");
+                    comboBox.setSelectedItem("ios");
                 }
             }
 
@@ -160,7 +160,8 @@ public class ApiTest extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     JOptionPane.showMessageDialog(requestArea, "登出成功");
                     ApiTest.this.setVisible(false);
-                    ApiTest apiTest = new ApiTest(ApiTest.host, null, null, UrlUtil.getInstance().getUrlVersion(), null);
+                    ApiTest apiTest = new ApiTest(ApiTest.host, null, null, UrlUtil.getInstance().getUrlVersion(),
+                            null);
                     apiTest.setDefaultCloseOperation(3);
                     apiTest.setVisible(true);
                 }
@@ -169,8 +170,8 @@ public class ApiTest extends JFrame {
 
             ActionListener sendListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String returnjson = HttpClientUtils.sendPost(urlField.getText(), requestArea.getText(), comboBox
-                            .getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
+                    String returnjson = HttpClientUtils.sendPost(urlField.getText(), requestArea.getText(),
+                            comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
                     responseArea.setText(JsonUtils.jsonFormatter(returnjson));
                 }
             };

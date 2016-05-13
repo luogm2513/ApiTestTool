@@ -62,7 +62,7 @@ public class Login extends JFrame {
             comboBox.setBounds(135, 35, 150, 25);
             jpanel.add(comboBox);
             comboBox.addItem("android");
-            comboBox.addItem("IOS");
+            comboBox.addItem("ios");
 
             JLabel label3 = new JLabel("版本号：");
             label3.setBounds(50, 70, 75, 25);
@@ -118,8 +118,8 @@ public class Login extends JFrame {
                         requestJson.put("password", Md5Utils.getMD5(String.valueOf(password.getPassword())));
                         requestJson.put("deviceId", "apiTestTool");
 
-                        String returnjson = HttpClientUtils.sendPost(url, requestJson.toString(), comboBox
-                                .getSelectedItem().toString(), version, auth);
+                        String returnjson = HttpClientUtils.sendPost(url, requestJson.toString(),
+                                comboBox.getSelectedItem().toString(), version, auth);
                         JSONObject responseJson = new JSONObject(returnjson);
                         if (responseJson.get("flag") != null && responseJson.get("flag").toString().equals("0")) {
                             auth = responseJson.get("authentication").toString();
@@ -138,7 +138,8 @@ public class Login extends JFrame {
                         e.printStackTrace();
                     }
                     Login.this.setVisible(false);
-                    ApiTest apiTest = new ApiTest(host, loginName, auth, version, comboBox.getSelectedItem().toString());
+                    ApiTest apiTest = new ApiTest(host, loginName, auth, version,
+                            comboBox.getSelectedItem().toString());
                     apiTest.setDefaultCloseOperation(3);
                     apiTest.setVisible(true);
                 }
