@@ -88,7 +88,7 @@ public class ApiTest extends JFrame {
             versionField.setBounds(670, 10, 125, 25);
             getContentPane().add(versionField);
 
-            JLabel lblPost = new JLabel("POST URL");
+            JLabel lblPost = new JLabel("URL");
             lblPost.setBounds(320, 40, 60, 25);
             getContentPane().add(lblPost);
 
