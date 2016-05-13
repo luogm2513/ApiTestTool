@@ -88,9 +88,13 @@ public class ApiTest extends JFrame {
             versionField.setBounds(670, 10, 125, 25);
             getContentPane().add(versionField);
 
-            JLabel lblPost = new JLabel("URL");
-            lblPost.setBounds(320, 40, 60, 25);
-            getContentPane().add(lblPost);
+            final JComboBox restBox = new JComboBox();
+            restBox.setBounds(320, 40, 60, 25);
+            restBox.addItem("GET");
+            restBox.addItem("POST");
+            restBox.addItem("PUT");
+            restBox.addItem("DELETE");
+            getContentPane().add(restBox);
 
             final JTextField urlField = new JTextField("http://" + ApiTest.host);
             urlField.setBounds(395, 40, 400, 25);
@@ -170,8 +174,20 @@ public class ApiTest extends JFrame {
 
             ActionListener sendListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    String returnjson = HttpClientUtils.sendPost(urlField.getText(), requestArea.getText(),
-                            comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
+                    String returnjson = "";
+                    if (restBox.getSelectedItem().toString().equals("GET")) {
+                        returnjson = HttpClientUtils.sendGet(urlField.getText(), requestArea.getText(),
+                                comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
+                    } else if (restBox.getSelectedItem().toString().equals("POST")) {
+                        returnjson = HttpClientUtils.sendPost(urlField.getText(), requestArea.getText(),
+                                comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
+                    } else if (restBox.getSelectedItem().toString().equals("PUT")) {
+                        returnjson = HttpClientUtils.sendPut(urlField.getText(), requestArea.getText(),
+                                comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
+                    } else if (restBox.getSelectedItem().toString().equals("DELETE")) {
+                        returnjson = HttpClientUtils.sendDelete(urlField.getText(), requestArea.getText(),
+                                comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
+                    }
                     responseArea.setText(JsonUtils.jsonFormatter(returnjson));
                 }
             };
@@ -193,6 +209,7 @@ public class ApiTest extends JFrame {
                         urlField.setText("http://" + ApiTest.host + dto.getUrl());
                         requestArea.setText(JsonUtils.jsonFormatter(dto.getParam()));
                         responseArea.setText("");
+                        restBox.setSelectedItem(dto.getRestMethod());
                     }
                 }
             };

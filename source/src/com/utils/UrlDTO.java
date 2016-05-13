@@ -3,6 +3,7 @@ package com.utils;
 public class UrlDTO implements Comparable<UrlDTO> {
     private String url;
     private String param;
+    private String restMethod;
 
     public String getUrl() {
         return url;
@@ -18,6 +19,14 @@ public class UrlDTO implements Comparable<UrlDTO> {
 
     public void setParam(String param) {
         this.param = param;
+    }
+
+    public String getRestMethod() {
+        return restMethod;
+    }
+
+    public void setRestMethod(String restMethod) {
+        this.restMethod = restMethod;
     }
 
     @Override
