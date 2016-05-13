@@ -7,15 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.google.gson.Gson;
-
-import net.sf.cglib.beans.BeanMap;
-
-/**
- * 不允许谁删除，吴敏强
- */
 public class GetAllURLTest {
     public static GetAllURLTest anno = null;
 
@@ -29,10 +21,6 @@ public class GetAllURLTest {
     @SuppressWarnings("all")
     public void loadVlaue(Class annotationClasss, String annotationField, String className, LinkedList<UrlDTO> list)
             throws Exception {
-        // System.out.println("————————————————————————————————————————————————————————————
-        // ");
-        // System.out.println(className);
-
         Annotation an = Class.forName(className).getAnnotation(annotationClasss);
 
         String prename = "";
@@ -41,16 +29,12 @@ public class GetAllURLTest {
             String[] avalues = (String[]) a.invoke(an, null);
 
             prename = avalues[0];
-            // for (String key : avalues) {
-            // System.out.println("类注解值 = " + key);
-            // }
         }
 
         Method[] methods = Class.forName(className).getDeclaredMethods();
         if (methods == null || methods.length == 0) {
             return;
         }
-        // StringBuilder urlAndParams = new StringBuilder();
         for (Method method : methods) {
             if (method.isAnnotationPresent(annotationClasss)) {
                 Annotation p = method.getAnnotation(annotationClasss);
@@ -64,9 +48,8 @@ public class GetAllURLTest {
                     Class<?>[] ts = method.getParameterTypes();
                     if (ts != null && ts.length > 0) {
                         Object paramObject = ts[0].newInstance();
-                        // 数据格式化处理
                         setNullProperties(paramObject);
-                        param = toJSON(paramObject);
+                        param = JsonUtils.tojson(paramObject);
                     }
                     if (StringUtils.isBlank(param)) {
                         param = "{}";
@@ -76,32 +59,27 @@ public class GetAllURLTest {
                     urlDTO.setParam(param);
                     urlDTO.setUrl(url);
                     list.add(urlDTO);
-                    // System.out.println("url=" + url + ",param=" + param);
-                    // urlAndParams.append("{\"url\":\"").append(url).append("\",\"param\":").append(param).append("},");
                 }
             }
         }
-        // return urlAndParams.toString();
     }
 
     public void listFile(String prepath, String path, LinkedList<UrlDTO> list) throws Exception {
         File file = new File(path);
         File[] f = file.listFiles();
-        if (f != null && f.length > 0) {
-            for (int i = 0; i < f.length; i++) {
-                if (f[i].isDirectory()) {
-                    this.listFile(prepath, f[i].getPath(), list);
-                } else {
-                    if (f[i].getName().indexOf("Controller") != -1) {
-                        if (f[i].getName().indexOf("KanoUploadController") != -1) {
-                            continue;
-                        }
-                        this.loadVlaue(RequestMapping.class, "value", f[i].getPath().replaceAll("\\\\", "/")
-                                .replaceFirst(prepath, "").replaceAll("/", ".").replaceAll(".java", ""), list);
-                    }
+
+        for (int i = 0; i < f.length; i++) {
+            if (f[i].isDirectory()) {
+                this.listFile(prepath, f[i].getPath(), list);
+            } else {
+                if (f[i].getName().indexOf("Controller") != -1) {
+                    this.loadVlaue(RequestMapping.class, "value",
+                            f[i].getPath().replaceAll("\\\\", "/").replaceFirst(prepath, "").replaceAll("/", ".")
+                                    .replaceAll(".java", ""), list);
                 }
             }
         }
+
     }
 
     /**
@@ -118,7 +96,7 @@ public class GetAllURLTest {
         for (Field field : fields) {
             String fieldName = field.getName();
             Object properties = fieldMap.get(fieldName);
-            if (isBaseObject(field.getType())) {
+            if (isBaseObject(field.getType().getClass())) {
                 if (field.getType().equals(String.class)) {
                     if (properties == null) {
                         fieldMap.put(fieldName, "");
@@ -146,7 +124,6 @@ public class GetAllURLTest {
                 setNullProperties(properties);
             }
         }
-
     }
 
     /**
@@ -164,29 +141,16 @@ public class GetAllURLTest {
     }
 
     /**
-     * 对象转换成json格式
-     * 
-     * @param obj
-     * @return
-     */
-    public static String toJSON(Object obj) {
-        if (obj == null) {
-            return "";
-        }
-        Gson gson = new Gson();
-        return gson.toJson(obj);
-    }
-
-    /**
      * @param args
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         String prepath = GetAllURLTest.getInstance().getClass().getClassLoader().getResource("").getPath()
-                .replace("target/test-classes/", "") + "src/main/java/";
+                .replace("target/test-classes/", "")
+                + "src/main/java/";
         prepath = prepath.startsWith("/") ? prepath.substring(1) : prepath;
         LinkedList<UrlDTO> list = new LinkedList<UrlDTO>();
-        GetAllURLTest.getInstance().listFile(prepath, prepath + "com/greenline/appservice/web/controllers", list);
-        System.out.println("{\"urlVersion\":2.43,\"urls\":" + toJSON(list) + "}");
+        GetAllURLTest.getInstance().listFile(prepath, prepath + "com/nazir/controllers", list);
+        System.out.println("{\"urlVersion\":1.0,\"urls\":" + JsonUtils.tojson(list) + "}");
     }
 }
