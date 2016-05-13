@@ -25,6 +25,17 @@ public class JsonUtils {
         return prettyJsonString;
     }
 
+    public static String getUglyJson(String prettyJsonString) {
+        String uglyJSONString = "";
+        try {
+            JSONObject jsonObject = new JSONObject(prettyJsonString);
+            uglyJSONString = jsonObject.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return uglyJSONString;
+    }
+
     /**
      * 对象转换成json格式
      * 

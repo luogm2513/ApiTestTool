@@ -61,9 +61,11 @@ public class UrlUtil {
                 for (int i = 0; i < ja.length(); i++) {
                     JSONObject jo = ja.getJSONObject(i);
                     String url = JsonUtils.getStrFromJO(jo, "url", "");
+                    String restMethod = JsonUtils.getStrFromJO(jo, "restMethod", "");
                     String param = JsonUtils.getStrFromJO(jo, "param", "");
                     UrlDTO urlDTO = new UrlDTO();
                     urlDTO.setUrl(url);
+                    urlDTO.setRestMethod(restMethod);
                     urlDTO.setParam(param);
                     urlMap.put(url, urlDTO);
                 }
@@ -142,14 +144,15 @@ public class UrlUtil {
      * @param params
      */
     public void saveParams(String url, String params) {
-        urlMap.get(url).setParam(params);
+        urlMap.get(url).setParam(JsonUtils.getUglyJson(params));
         saveUrlText();
     }
 
     private void saveUrlText() {
         StringBuilder sb = new StringBuilder("{\"urlVersion\":" + getUrlVersion() + ",\"urls\":[");
         for (Map.Entry<String, UrlDTO> entry : urlMap.entrySet()) {
-            sb.append("{\"url\":\"").append(entry.getKey()).append("\",\"param\":")
+            sb.append("{\"url\":\"").append(entry.getKey()).append("\",\"restMethod\":\"")
+                    .append(entry.getValue().getRestMethod()).append("\",\"param\":")
                     .append(JsonUtils.tojson(entry.getValue().getParam())).append("},");
         }
         String str = sb.toString();
