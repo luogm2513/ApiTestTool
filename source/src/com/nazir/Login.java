@@ -23,10 +23,10 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import com.google.gson.JsonObject;
 import com.utils.HttpClientUtils;
+import com.utils.JsonUtils;
 import com.utils.Md5Utils;
 import com.utils.UrlUtil;
 
@@ -113,14 +113,14 @@ public class Login extends JFrame {
                     }
                     try {
                         String url = "http://" + host + LOGIN_URI;
-                        JSONObject requestJson = new JSONObject();
-                        requestJson.put("loginId", account.getText());
-                        requestJson.put("password", Md5Utils.getMD5(String.valueOf(password.getPassword())));
-                        requestJson.put("deviceId", "apiTestTool");
+                        JsonObject requestJson = new JsonObject();
+                        requestJson.addProperty("loginId", account.getText());
+                        requestJson.addProperty("password", Md5Utils.getMD5(String.valueOf(password.getPassword())));
+                        requestJson.addProperty("deviceId", "apiTestTool");
 
                         String returnjson = HttpClientUtils.sendPost(url, requestJson.toString(),
                                 comboBox.getSelectedItem().toString(), version, auth);
-                        JSONObject responseJson = new JSONObject(returnjson);
+                        JsonObject responseJson = JsonUtils.fromJson(returnjson, JsonObject.class);
                         if (responseJson.get("flag") != null && responseJson.get("flag").toString().equals("0")) {
                             auth = responseJson.get("authentication").toString();
                             loginName = responseJson.get("userName").toString();
@@ -131,8 +131,6 @@ public class Login extends JFrame {
                     } catch (ClientProtocolException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();

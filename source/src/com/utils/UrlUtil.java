@@ -13,9 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class UrlUtil {
 
@@ -53,25 +52,21 @@ public class UrlUtil {
 
     // 获取一级分组名称列表
     private void loadurl() {
-        try {
-            JSONObject jsonObject = new JSONObject(getJsonFile());
-            urlVersion = JsonUtils.getStrFromJO(jsonObject, "urlVersion", "");
-            JSONArray ja = jsonObject.getJSONArray("urls");
-            if (ja != null && ja.length() > 0) {
-                for (int i = 0; i < ja.length(); i++) {
-                    JSONObject jo = ja.getJSONObject(i);
-                    String url = JsonUtils.getStrFromJO(jo, "url", "");
-                    String restMethod = JsonUtils.getStrFromJO(jo, "restMethod", "");
-                    String param = JsonUtils.getStrFromJO(jo, "param", "");
-                    UrlDTO urlDTO = new UrlDTO();
-                    urlDTO.setUrl(url);
-                    urlDTO.setRestMethod(restMethod);
-                    urlDTO.setParam(param);
-                    urlMap.put(url, urlDTO);
-                }
+        JsonObject jsonObject = JsonUtils.fromJson(getJsonFile(), JsonObject.class);
+        urlVersion = JsonUtils.getStrFromJO(jsonObject, "urlVersion", "");
+        JsonArray ja = jsonObject.getAsJsonArray("urls");
+        if (ja != null && ja.size() > 0) {
+            for (int i = 0; i < ja.size(); i++) {
+                JsonObject jo = ja.get(i).getAsJsonObject();
+                String url = JsonUtils.getStrFromJO(jo, "url", "");
+                String restMethod = JsonUtils.getStrFromJO(jo, "restMethod", "");
+                String param = JsonUtils.getStrFromJO(jo, "param", "");
+                UrlDTO urlDTO = new UrlDTO();
+                urlDTO.setUrl(url);
+                urlDTO.setRestMethod(restMethod);
+                urlDTO.setParam(param);
+                urlMap.put(url, urlDTO);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 

@@ -1,12 +1,11 @@
 package com.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class JsonUtils {
@@ -26,14 +25,11 @@ public class JsonUtils {
     }
 
     public static String getUglyJson(String prettyJsonString) {
-        String uglyJSONString = "";
-        try {
-            JSONObject jsonObject = new JSONObject(prettyJsonString);
-            uglyJSONString = jsonObject.toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (StringUtils.isBlank(prettyJsonString)) {
+            return "";
         }
-        return uglyJSONString;
+        JsonObject jsonObject = JsonUtils.fromJson(prettyJsonString, JsonObject.class);
+        return jsonObject.toString();
     }
 
     /**
@@ -48,6 +44,18 @@ public class JsonUtils {
     }
 
     /**
+     * json字符串转成对象
+     * 
+     * @param str
+     * @param type
+     * @return
+     */
+    public static <T> T fromJson(String str, Class<T> type) {
+        Gson gson = new Gson();
+        return gson.fromJson(str, type);
+    }
+
+    /**
      * 从json对象中获取字符串对象
      * 
      * @param jo
@@ -55,15 +63,12 @@ public class JsonUtils {
      * @param defaultValue
      * @return String
      */
-    public static String getStrFromJO(JSONObject jo, String name, String defaultValue) {
+    public static String getStrFromJO(JsonObject jo, String name, String defaultValue) {
         String value = defaultValue;
         if (jo.has(name)) {
-            try {
-                value = jo.getString(name);
-                if (StringUtils.isBlank(value) || "null".equals(value)) {
-                    value = defaultValue;
-                }
-            } catch (JSONException e) {
+            value = jo.get(name).getAsString();
+            if (StringUtils.isBlank(value) || "null".equals(value)) {
+                value = defaultValue;
             }
         }
         return value;
