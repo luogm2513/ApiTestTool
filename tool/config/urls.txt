@@ -1,1 +1,1 @@
-{"urlVersion":1.0,"urls":[{"url":"/account/login.json","param":{"loginId":"","password":""}}]}
+{"urlVersion":1.0,"urls":[{"url":"/account/login.json","restMethod":"PUT","param":"{\"loginId\":213,\"password\":111}"}]}
