@@ -13,8 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 public class UrlUtil {
 
@@ -52,21 +54,24 @@ public class UrlUtil {
 
     // 获取一级分组名称列表
     private void loadurl() {
-        JsonObject jsonObject = JsonUtils.fromJson(getJsonFile(), JsonObject.class);
-        urlVersion = JsonUtils.getStrFromJO(jsonObject, "urlVersion", "");
-        JsonArray ja = jsonObject.getAsJsonArray("urls");
-        if (ja != null && ja.size() > 0) {
-            for (int i = 0; i < ja.size(); i++) {
-                JsonObject jo = ja.get(i).getAsJsonObject();
-                String url = JsonUtils.getStrFromJO(jo, "url", "");
-                String restMethod = JsonUtils.getStrFromJO(jo, "restMethod", "");
-                String param = JsonUtils.getStrFromJO(jo, "param", "");
-                UrlDTO urlDTO = new UrlDTO();
-                urlDTO.setUrl(url);
-                urlDTO.setRestMethod(restMethod);
-                urlDTO.setParam(param);
-                urlMap.put(url, urlDTO);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode node = objectMapper.readTree(getJsonFile());
+            if (node.has("urlVersion")) {
+                urlVersion = Double.toString(node.get("urlVersion").getDoubleValue());
             }
+            List<UrlDTO> list = new ArrayList<UrlDTO>();
+            if (node.has("urls")) {
+                list = objectMapper.readValue(node.get("urls"), new TypeReference<List<UrlDTO>>() {
+                });
+            }
+            for (UrlDTO dto : list) {
+                urlMap.put(dto.getUrl(), dto);
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -139,19 +144,16 @@ public class UrlUtil {
      * @param params
      */
     public void saveParams(String url, String params) {
-        urlMap.get(url).setParam(JsonUtils.getUglyJson(params));
+        urlMap.get(url).setParam(params);
         saveUrlText();
     }
 
     private void saveUrlText() {
-        StringBuilder sb = new StringBuilder("{\"urlVersion\":" + getUrlVersion() + ",\"urls\":[");
+        StringBuilder sb = new StringBuilder("{\"urlVersion\":" + getUrlVersion() + ",\"urls\":");
+        List<UrlDTO> list = new ArrayList<UrlDTO>();
         for (Map.Entry<String, UrlDTO> entry : urlMap.entrySet()) {
-            sb.append("{\"url\":\"").append(entry.getKey()).append("\",\"restMethod\":\"")
-                    .append(entry.getValue().getRestMethod()).append("\",\"param\":")
-                    .append(JsonUtils.tojson(entry.getValue().getParam())).append("},");
+            list.add(entry.getValue());
         }
-        String str = sb.toString();
-        str = str.substring(0, str.length() - 1);
-        setJsonFile(str + "]}");
+        setJsonFile(sb.append(JsonUtils.toJson(list)).append("}").toString());
     }
 }

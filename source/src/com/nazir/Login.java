@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -24,7 +26,6 @@ import javax.swing.UIManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 
-import com.google.gson.JsonObject;
 import com.utils.HttpClientUtils;
 import com.utils.JsonUtils;
 import com.utils.Md5Utils;
@@ -113,19 +114,19 @@ public class Login extends JFrame {
                     }
                     try {
                         String url = "http://" + host + LOGIN_URI;
-                        JsonObject requestJson = new JsonObject();
-                        requestJson.addProperty("loginId", account.getText());
-                        requestJson.addProperty("password", Md5Utils.getMD5(String.valueOf(password.getPassword())));
-                        requestJson.addProperty("deviceId", "apiTestTool");
+                        Map<String, String> map = new HashMap<String, String>();
+                        map.put("loginId", account.getText());
+                        map.put("password", Md5Utils.getMD5(String.valueOf(password.getPassword())));
+                        map.put("deviceId", "apiTestTool");
 
-                        String returnjson = HttpClientUtils.sendPost(url, requestJson.toString(),
+                        String returnjson = HttpClientUtils.sendPost(url, JsonUtils.toJson(map),
                                 comboBox.getSelectedItem().toString(), version, auth);
-                        JsonObject responseJson = JsonUtils.fromJson(returnjson, JsonObject.class);
-                        if (responseJson.get("flag") != null && responseJson.get("flag").toString().equals("0")) {
-                            auth = responseJson.get("authentication").toString();
-                            loginName = responseJson.get("userName").toString();
+                        if (JsonUtils.getStrFromJson(returnjson, "flag") != null
+                                && JsonUtils.getStrFromJson(returnjson, "flag").equals("0")) {
+                            auth = JsonUtils.getStrFromJson(returnjson, "authentication");
+                            loginName = JsonUtils.getStrFromJson(returnjson, "userName");
                         } else {
-                            JOptionPane.showMessageDialog(account, responseJson.get("message").toString());
+                            JOptionPane.showMessageDialog(account, JsonUtils.getStrFromJson(returnjson, "message"));
                             return;
                         }
                     } catch (ClientProtocolException e) {

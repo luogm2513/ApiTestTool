@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -188,7 +189,7 @@ public class ApiTest extends JFrame {
                         returnjson = HttpClientUtils.sendDelete(urlField.getText(), requestArea.getText(),
                                 comboBox.getSelectedItem().toString(), versionField.getText(), ApiTest.auth);
                     }
-                    responseArea.setText(JsonUtils.jsonFormatter(returnjson));
+                    responseArea.setText(JsonUtils.toJSONFormatter(JsonUtils.readValue(returnjson, Map.class), true));
                 }
             };
             btnSend.addActionListener(sendListener);
@@ -207,7 +208,8 @@ public class ApiTest extends JFrame {
                     if (node.isLeaf()) {
                         UrlDTO dto = UrlUtil.getInstance().getUrlDTO(node.toString());
                         urlField.setText("http://" + ApiTest.host + dto.getUrl());
-                        requestArea.setText(JsonUtils.jsonFormatter(dto.getParam()));
+                        requestArea.setText(
+                                JsonUtils.toJSONFormatter(JsonUtils.readValue(dto.getParam(), Map.class), true));
                         responseArea.setText("");
                         restBox.setSelectedItem(dto.getRestMethod());
                     }
@@ -219,7 +221,8 @@ public class ApiTest extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     String url = urlField.getText().replace("http://" + ApiTest.host, "");
                     String params = requestArea.getText();
-                    UrlUtil.getInstance().saveParams(url, params);
+                    UrlUtil.getInstance().saveParams(url,
+                            JsonUtils.toJSONFormatter(JsonUtils.readValue(params, Map.class), false));
                     JOptionPane.showMessageDialog(requestArea, "保存成功！");
                 }
             };
