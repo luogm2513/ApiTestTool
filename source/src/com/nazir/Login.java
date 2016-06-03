@@ -29,12 +29,13 @@ import org.apache.http.client.ClientProtocolException;
 import com.utils.HttpClientUtils;
 import com.utils.JsonUtils;
 import com.utils.Md5Utils;
+import com.utils.PropertiesUtil;
 import com.utils.UrlUtil;
 
 public class Login extends JFrame {
     private static final long serialVersionUID = 1L;
 
-    private static final String LOGIN_URI = "/account/login.json";
+    private static final String LOGIN_URI_KEY = "login.uri";
 
     public Login() {
         setBackground(Color.WHITE);
@@ -113,7 +114,7 @@ public class Login extends JFrame {
                         return;
                     }
                     try {
-                        String url = "http://" + host + LOGIN_URI;
+                        String url = "http://" + host + PropertiesUtil.getInstance().getConfig(LOGIN_URI_KEY);
                         Map<String, String> map = new HashMap<String, String>();
                         map.put("loginId", account.getText());
                         map.put("password", Md5Utils.getMD5(String.valueOf(password.getPassword())));
