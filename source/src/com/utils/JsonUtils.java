@@ -21,13 +21,11 @@ public class JsonUtils {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
         }
-
         try {
             return objectMapper.writeValueAsString(object);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -48,13 +46,11 @@ public class JsonUtils {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
         }
-
         try {
             return objectMapper.readValue(json, valueType);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -72,7 +68,6 @@ public class JsonUtils {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
         }
-
         try {
             return objectMapper.readValue(json, valueTypeRef);
         } catch (Exception e) {
@@ -96,7 +91,6 @@ public class JsonUtils {
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
         }
-
         try {
             Map<String, Object> map = objectMapper.readValue(json, Map.class);
             for (Entry<String, Object> extry : map.entrySet()) {
@@ -104,12 +98,9 @@ public class JsonUtils {
                     return extry.getValue().toString();
                 }
             }
-
-            return objectMapper.writeValueAsString(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
