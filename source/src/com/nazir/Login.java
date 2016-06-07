@@ -75,7 +75,8 @@ public class Login extends JFrame {
             JLabel label4 = new JLabel("域名：");
             label4.setBounds(50, 105, 75, 25);
             jpanel.add(label4);
-            final JTextField hostAndPort = new JTextField("localhost:8080", 20);
+            final JTextField hostAndPort = new JTextField(PropertiesUtil.getInstance().getConfig("host") + ":"
+                    + PropertiesUtil.getInstance().getConfig("port"), 20);
             hostAndPort.setBounds(135, 105, 150, 25);
             jpanel.add(hostAndPort);
             JLabel label5 = new JLabel("登录名：");
