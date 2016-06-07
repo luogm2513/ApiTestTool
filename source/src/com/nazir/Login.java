@@ -128,7 +128,11 @@ public class Login extends JFrame {
                             auth = JsonUtils.getStrFromJson(returnjson, "authentication");
                             loginName = JsonUtils.getStrFromJson(returnjson, "userName");
                         } else {
-                            JOptionPane.showMessageDialog(account, JsonUtils.getStrFromJson(returnjson, "message"));
+                            if (JsonUtils.getStrFromJson(returnjson, "message") != null) {
+                                JOptionPane.showMessageDialog(account, JsonUtils.getStrFromJson(returnjson, "message"));
+                            } else {
+                                JOptionPane.showMessageDialog(account, "登录失败，请检查登录域名配置");
+                            }
                             return;
                         }
                     } catch (ClientProtocolException e) {
