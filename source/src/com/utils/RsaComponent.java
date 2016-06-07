@@ -21,8 +21,8 @@ public class RsaComponent {
     @SuppressWarnings("serial")
     private final Map<String, String> publicKeyFileMap = new HashMap<String, String>() {
         {
-            this.put(ANDROID, "classpath*:/com/resources/android_public.key");
-            this.put(IPHONE, "classpath*:/com/resources/iphone_public.key");
+            this.put(ANDROID, "/config/publickey/android_public.key");
+            this.put(IPHONE, "/config/publickey/iphone_public.key");
         }
     };
 
@@ -67,12 +67,9 @@ public class RsaComponent {
         InputStream in = null;
         BufferedReader br = null;
         try {
-            if (fileRoot.indexOf("classpath*:") != -1) {
-                in = this.getClass().getResourceAsStream(fileRoot.replace("classpath*:", ""));
-            } else {
-                File file = new File(fileRoot);
-                in = new FileInputStream(file);
-            }
+            String filePath = System.getProperty("user.dir") + fileRoot;
+            File file = new File(filePath);
+            in = new FileInputStream(file);
             br = new BufferedReader(new InputStreamReader(in));
 
             String readLine = null;

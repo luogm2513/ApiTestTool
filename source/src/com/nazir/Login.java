@@ -82,13 +82,13 @@ public class Login extends JFrame {
             JLabel label5 = new JLabel("登录名：");
             label5.setBounds(50, 140, 75, 25);
             jpanel.add(label5);
-            final JTextField account = new JTextField(20);
+            final JTextField account = new JTextField(PropertiesUtil.getInstance().getConfig("account"), 20);
             account.setBounds(135, 140, 150, 25);
             jpanel.add(account);
             JLabel label6 = new JLabel("密码：");
             label6.setBounds(50, 175, 75, 25);
             jpanel.add(label6);
-            final JPasswordField password = new JPasswordField(20);
+            final JPasswordField password = new JPasswordField(PropertiesUtil.getInstance().getConfig("password"), 20);
             password.setBounds(135, 175, 150, 25);
             jpanel.add(password);
 
