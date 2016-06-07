@@ -220,7 +220,7 @@ public class ApiTest extends JFrame {
             ActionListener saveListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     String url = urlField.getText().replace("http://" + ApiTest.host, "");
-                    String params = requestArea.getText();
+                    String params = UrlUtil.replaceBlank(requestArea.getText());
                     UrlUtil.getInstance().saveParams(url,
                             JsonUtils.toJSONFormatter(JsonUtils.readValue(params, Map.class), false));
                     JOptionPane.showMessageDialog(requestArea, "保存成功！");

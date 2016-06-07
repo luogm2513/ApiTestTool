@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -155,5 +157,15 @@ public class UrlUtil {
             list.add(entry.getValue());
         }
         setJsonFile(sb.append(JsonUtils.toJson(list)).append("}").toString());
+    }
+
+    public static String replaceBlank(String str) {
+        String dest = "";
+        if (str != null) {
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
+        }
+        return dest;
     }
 }
